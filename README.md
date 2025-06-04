@@ -85,6 +85,13 @@ Detect whether a news article is **REAL** or **FAKE** using powerful AI models â
     ```
 7. Open [http://127.0.0.1:5000/](http://127.0.0.1:5000/) in your browser.
 
+## ðŸ“¥ Download Training Dataset
+
+Due to GitHub file size limits, please download the training data manually:
+
+- [Fake.csv , True.csv (Kaggle)](https://www.kaggle.com/datasets/emineyetm/fake-news-detection-datasets)
+
+After downloading, place them in the `data/` folder before training.
 
 ---
 
