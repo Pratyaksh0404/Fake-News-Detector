@@ -52,7 +52,7 @@ Detect whether a news article is **REAL** or **FAKE** using powerful AI models â
 
 1. Clone this repo:
     ```bash
-    git clone https://github.com/Pratyaksh0404/Fake-News-Detector.git
+    git clone https://github.com/yourusername/Fake-News-Detector.git
     cd Fake-News-Detector
     ```
 
