@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake News Detector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .main-card {
+      background-color: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    .section-title {
+      color: #6a1b9a;
+    }
+    .btn-primary {
+      background-color: #6a1b9a;
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #4a148c;
+    }
+    #summaryBlock {
+      background-color: #f3e5f5;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .disclaimer {
+      font-size: 0.85rem;
+      color: #666;
+    }
+    #gaugePlot {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <div class="main-card mx-auto" style="max-width: 800px;">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold section-title">📰 Fake News Detection App</h2>
+        <p class="text-muted">Hello! I am your AI assistant. Here you can check the credibility of your news.</p>
+        <p class="disclaimer">Note: This is an AI-based prediction. No model can guarantee 100% certainty.</p>
+      </div>
+      <form id="newsForm" method="post">
+        <div class="mb-3">
+          <label for="inputType" class="form-label">Choose input type:</label>
+          <select class="form-select" id="inputType" name="input_type">
+            <option value="text">Text</option>
+            <option value="url">URL</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="userInput" class="form-label">Enter your news text or URL:</label>
+          <textarea class="form-control" id="userInput" name="user_input" rows="5" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="modelChoice" class="form-label">Select prediction model:</label>
+          <select class="form-select" id="modelChoice" name="model_choice">
+            <option value="bert">BERT (Recommended)</option>
+            <option value="random_forest">Random Forest</option>
+          </select>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary px-5">Analyze</button>
+        </div>
+      </form>
+      <hr class="my-5">
+      <div id="results" style="display: none;">
+        <h4 class="text-center section-title">🔍 Analysis Result</h4>
+        <div class="mt-4">
+          <p><strong>Prediction:</strong> <span id="predictionLabel"></span></p>
+          <p><strong>Confidence:</strong> <span id="confidence"></span>%</p>
+          <p><strong>Source:</strong> <span id="source"></span></p>
+          <p><strong>Characteristics:</strong> <span id="characteristics"></span></p>
+          <div id="summaryBlock" class="mt-3">
+            <p class="mb-1"><strong>Summary:</strong></p>
+            <div id="summary"></div>
+          </div>
+        </div>
+        <div id="gaugePlot" class="mt-5"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.getElementById("newsForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const response = await fetch("/predict", { method: "POST", body: formData });
+      const data = await response.json();
+      if (data.error) return alert("Error: " + data.error);
+      document.getElementById("results").style.display = "block";
+      document.getElementById("predictionLabel").innerText = data.prediction;
+      document.getElementById("confidence").innerText = data.confidence;
+      document.getElementById("source").innerText = data.source || 'N/A';
+      document.getElementById("characteristics").innerText =
+        Array.isArray(data.characteristics) && data.characteristics.length > 0
+          ? data.characteristics.join(', ')
+          : 'N/A';
+      document.getElementById("summary").innerText = data.summary || 'No summary available.';
+      const value = parseFloat(data.confidence);
+      const fig = {
+        data: [{
+          type: "indicator",
+          mode: "gauge+number",
+          value: value,
+          title: { text: "Confidence Score", font: { size: 20 } },
+          gauge: {
+            axis: { range: [0, 100], tickwidth: 1, tickcolor: "darkblue" },
+            bar: { color: "#6a1b9a" },
+            bgcolor: "white",
+            borderwidth: 2,
+            bordercolor: "gray",
+            steps: [
+              { range: [0, 20], color: "#d32f2f" },
+              { range: [20, 40], color: "#f57c00" },
+              { range: [40, 60], color: "#fbc02d" },
+              { range: [60, 80], color: "#7cb342" },
+              { range: [80, 100], color: "#388e3c" }
+            ],
+            threshold: {
+              line: { color: "red", width: 4 },
+              thickness: 0.75,
+              value: value
+            }
+          }
+        }],
+        layout: {
+          width: 400,
+          height: 250,
+          margin: { t: 0, b: 0, l: 0, r: 0 },
+          paper_bgcolor: "lavender",
+          font: { color: "darkblue", family: "Arial" }
+        }
+      };
+      Plotly.newPlot('gaugePlot', fig.data, fig.layout);
+    });
+  </script>
+</body>
+</html>
