@@ -33,19 +33,20 @@ Detect whether a news article is **REAL** or **FAKE** using powerful AI models �
 ---
 
 ## 📁 Folder Structure
-- ├── app.py # Flask backend
-- ├── templates/
-- │ └── index.html # HTML frontend
-- ├── models/
-- │──└─ bert_fakenews1.pt # Trained BERT model (run notebook to generate)
-- │──└─ fake_news_model.joblib # Trained Random Forest model (run script to generate)
-- │──└─ tfidf_vectorizer.joblib
-- ├── utils.py # Preprocessing, summarization, analysis functions
-- ├── bert-model.ipynb # Notebook to train and save BERT model
-- ├── model_train.py # Script to train TF-IDF + Random Forest model
-- ├── requirements.txt
+```bash
+├── app.py                     # Flask backend
+├── templates/
+│   └── index.html             # HTML frontend
+├── models/
+│   ├── bert_fakenews1.pt      # Trained BERT model (run notebook to generate)
+│   ├── fake_news_model.joblib # Trained Random Forest model (run script to generate)
+│   └── tfidf_vectorizer.joblib
+├── utils.py                  # Preprocessing, summarization, analysis functions
+├── bert-model.ipynb          # Notebook to train and save BERT model
+├── model_train.py            # Script to train TF-IDF + Random Forest model
+├── requirements.txt
+```
 
-  
 ---
 
 ## 🛠️ Installation & Setup
